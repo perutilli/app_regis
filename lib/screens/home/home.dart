@@ -18,8 +18,17 @@ class _HomeState extends State<Home> {
   final FlutterTts txtToSpeech = FlutterTts();
 
   Future _speak() async {
+    int minutes = seconds ~/ 5;
+    String text;
     await txtToSpeech.setLanguage("it-IT");
-    await txtToSpeech.speak((seconds ~/ 5).toString() + " minuti passati");
+    switch (minutes) {
+      case 1:
+        text = "è passato " + minutes.toString() + " minuto";
+        break;
+      default:
+        text = "sono passati " + minutes.toString() + " minuti";
+    }
+    await txtToSpeech.speak(text);
   }
 
   _startTimer() {
@@ -60,15 +69,23 @@ class _HomeState extends State<Home> {
             children: [
               Padding(
                 padding: EdgeInsets.only(top: 20),
-                child: Text(time, style: TextStyle(fontSize: 40)),
+                child: Text(time, style: TextStyle(fontSize: 60)),
               ),
               Padding(
                   padding: EdgeInsets.only(top: 20),
                   child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      RaisedButton(
-                          onPressed: _startTimer, child: Text("Start")),
-                      RaisedButton(onPressed: _stopTimer, child: Text("Stop"))
+                      Padding(
+                        padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                        child: RaisedButton(
+                            onPressed: _startTimer, child: Text("Start")),
+                      ),
+                      Padding(
+                          padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                          child: RaisedButton(
+                              onPressed: _stopTimer, child: Text("Stop"))),
                     ],
                   ))
             ],
