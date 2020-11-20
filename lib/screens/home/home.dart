@@ -1,10 +1,8 @@
 import 'dart:async';
 
-import 'package:audioplayers/audio_cache.dart';
-import 'package:audioplayers/audioplayers.dart';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+
+import 'package:flutter_tts/flutter_tts.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -17,6 +15,13 @@ class _HomeState extends State<Home> {
 
   Timer timer;
 
+  final FlutterTts txtToSpeech = FlutterTts();
+
+  Future _speak() async {
+    await txtToSpeech.setLanguage("it-IT");
+    await txtToSpeech.speak((seconds ~/ 5).toString() + " minuti passati");
+  }
+
   _startTimer() {
     seconds = 0;
     if (timer != null && timer.isActive) {
@@ -26,7 +31,7 @@ class _HomeState extends State<Home> {
       setState(() {
         seconds++;
         if (seconds % 5 == 0) {
-          SystemSound.play(SystemSoundType.click);
+          _speak();
         }
         time = convertToTime(seconds);
       });
