@@ -18,17 +18,9 @@ class _HomeState extends State<Home> {
   final FlutterTts txtToSpeech = FlutterTts();
 
   Future _speak() async {
-    int minutes = seconds ~/ 5;
-    String text;
+    String speech = _genSpeech(seconds);
     await txtToSpeech.setLanguage("it-IT");
-    switch (minutes) {
-      case 1:
-        text = "è passato " + minutes.toString() + " minuto";
-        break;
-      default:
-        text = "sono passati " + minutes.toString() + " minuti";
-    }
-    await txtToSpeech.speak(text);
+    await txtToSpeech.speak(speech);
   }
 
   _startTimer() {
@@ -39,10 +31,10 @@ class _HomeState extends State<Home> {
     timer = Timer.periodic(Duration(seconds: 1), (timer) {
       setState(() {
         seconds++;
-        if (seconds % 5 == 0) {
+        if (seconds % 60 == 0) {
           _speak();
         }
-        time = convertToTime(seconds);
+        time = _convertToTime(seconds);
       });
     });
   }
@@ -53,7 +45,7 @@ class _HomeState extends State<Home> {
       if (timer != null && timer.isActive) {
         timer.cancel();
       }
-      time = convertToTime(seconds);
+      time = _convertToTime(seconds);
     });
   }
 
@@ -94,7 +86,7 @@ class _HomeState extends State<Home> {
   }
 }
 
-String convertToTime(int secs) {
+String _convertToTime(int secs) {
   String hours = (secs ~/ 3600).toString();
   String minutes = ((secs ~/ 60) % 60).toString();
   String seconds = (secs % 60).toString();
@@ -114,4 +106,30 @@ String convertToTime(int secs) {
     time = minutes + ":" + seconds;
   }
   return time;
+}
+
+String _genSpeech(int seconds) {
+  int minutes = seconds ~/ 60;
+  int hours = minutes ~/ 60;
+  String speech;
+
+  if ((minutes % 60) == 0) {
+    switch (hours) {
+      case 1:
+        speech = hours.toString() + " ora";
+        break;
+      default:
+        speech = hours.toString() + " ore";
+    }
+  } else {
+    switch (minutes) {
+      case 1:
+        speech = minutes.toString() + " minuto";
+        break;
+      default:
+        speech = minutes.toString() + " minuti";
+    }
+  }
+
+  return speech;
 }
